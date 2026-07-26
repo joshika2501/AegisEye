@@ -7,7 +7,11 @@ function Sidebar() {
 
             {/* Sidebar Header */}
             <div className="sidebar-brand">
-                <div className="brand-icon">🛡️</div>
+                <img
+                    src="/logo.jpeg"
+                    alt="AegisEye Logo"
+                    className="brand-logo"
+                />
 
                 <div className="brand-text">
                     <h1 className="sidebar-header">AegisEye</h1>

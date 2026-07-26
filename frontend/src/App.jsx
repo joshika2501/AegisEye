@@ -1,41 +1,36 @@
 import { useEffect, useState } from "react";
 import api from "./api/axiosInstance";
-
+import "./App.css";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import Login from "./pages/Login/Login";
 
 function App() {
-
-  const [status, setStatus] = useState("Checking backend...");
-
+  const [healthStatus, setHealthStatus] = useState("Checking backend...");
 
   useEffect(() => {
-
     api.get("/api/health")
-        .then((response) => {
-          setStatus(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-          setStatus("Backend connection failed");
-        });
-
+      .then((response) => {
+        setHealthStatus(response.data.status ?? "Backend connected");
+      })
+      .catch(() => {
+        setHealthStatus("Backend connection failed");
+      });
   }, []);
 
+  if (window.location.pathname === "/health") {
+    return (
+      <main>
+        <h1>Backend Status</h1>
+        <p>{healthStatus}</p>
+      </main>
+    );
+  }
 
-  return (
-      <div>
-        <h1>AegisSight Frontend</h1>
+  if (window.location.pathname === "/dashboard") {
+    return <Dashboard />;
+  }
 
-        <h2>
-          Backend Status:
-        </h2>
-
-        <p>
-          {status}
-        </p>
-
-      </div>
-  );
+  return <Login />;
 }
-
 
 export default App;
