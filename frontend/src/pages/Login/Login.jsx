@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../../api/axiosInstance";
 import "./Login.css";
 
 function MailIcon() {
@@ -18,8 +19,28 @@ function EyeIcon({ hidden }) {
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(true);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState("");
 
-    const handleSubmit = (event) => event.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setBusy(true);
+        setError("");
+        try {
+            const { data } = await api.post("/api/auth/login", { username, password });
+            localStorage.removeItem("accessToken");
+            sessionStorage.removeItem("accessToken");
+            (rememberMe ? localStorage : sessionStorage).setItem("accessToken", data.accessToken);
+            localStorage.setItem("displayName", data.user?.displayName || data.user?.username || username);
+            window.location.assign("/dashboard");
+        } catch (requestError) {
+            setError(requestError.response?.data?.message || "Login failed. Check your username, password, and backend connection.");
+        } finally {
+            setBusy(false);
+        }
+    };
 
     return (
         <main className="login-page">
@@ -36,10 +57,10 @@ function Login() {
 
                     <form className="login-form" onSubmit={handleSubmit}>
                         <label className="login-field">
-                            <span>Email Address</span>
+                            <span>Username</span>
                             <span className="login-input-wrap">
                 <MailIcon />
-                <input type="email" name="email" placeholder="Enter your email" autoComplete="email" />
+                <input type="text" name="username" placeholder="Enter your username" autoComplete="username" value={username} onChange={(event) => setUsername(event.target.value)} required />
               </span>
                         </label>
 
@@ -47,7 +68,7 @@ function Login() {
                             <span>Password</span>
                             <span className="login-input-wrap">
                 <LockIcon />
-                <input type={showPassword ? "text" : "password"} name="password" placeholder="Enter your password" autoComplete="current-password" />
+                <input type={showPassword ? "text" : "password"} name="password" placeholder="Enter your password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
                 <button className="password-toggle" type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"}>
                   <EyeIcon hidden={showPassword} />
                 </button>
@@ -59,17 +80,12 @@ function Login() {
                                 <input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />
                                 <span>Remember Me</span>
                             </label>
-                            <a href="#forgot-password">Forgot Password?</a>
+                            <span className="login-no-reset">Use your project operator account</span>
                         </div>
 
-                        <button className="login-submit" type="submit"><LockIcon /> LOGIN</button>
+                        {error && <p className="login-error" role="alert">{error}</p>}
+                        <button className="login-submit" type="submit" disabled={busy}><LockIcon /> {busy ? "SIGNING IN…" : "LOGIN"}</button>
 
-                        <div className="login-divider"><span>OR</span></div>
-
-                        <button className="login-sso" type="button">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8" r="4" /><path d="M3 20c0-3.2 2.7-5.5 7-5.5s7 2.3 7 5.5M17 12.5a3.5 3.5 0 0 1 4 3.5M18 17h3" /></svg>
-                            Login with SSO
-                        </button>
                     </form>
                 </section>
             </div>

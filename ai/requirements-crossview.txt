@@ -1,0 +1,6 @@
+# Optional DINOv2/FAISS pipeline dependencies; install a platform-compatible
+# PyTorch build separately when using GPU acceleration.
+torch>=2.2
+transformers>=4.40
+Pillow>=10
+faiss-cpu>=1.8

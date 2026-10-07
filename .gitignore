@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Virtual Environment
 venv/
@@ -32,3 +35,22 @@ Thumbs.db
 
 # Environment
 .env
+.env.*
+!.env.example
+
+# Java / Maven
+**/target/
+
+# Node / Vite
+**/node_modules/
+frontend/dist/
+
+# Local inspection and runtime artifacts
+.tmp-ai-inspect/
+outputs/
+runs/
+logs/
+
+# Do not add new dataset files in normal source commits; already tracked files remain tracked.
+datasets/*
+!datasets/README.md

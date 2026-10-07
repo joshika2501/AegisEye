@@ -5,32 +5,23 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Login from "./pages/Login/Login";
 
 function App() {
-  const [healthStatus, setHealthStatus] = useState("Checking backend...");
+  const [path, setPath] = useState(window.location.pathname);
+  const [health, setHealth] = useState("Checking backend…");
+  const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
 
   useEffect(() => {
-    api.get("/api/health")
-      .then((response) => {
-        setHealthStatus(response.data.status ?? "Backend connected");
-      })
-      .catch(() => {
-        setHealthStatus("Backend connection failed");
-      });
-  }, []);
+    const onPopState = () => setPath(window.location.pathname);
+    window.addEventListener("popstate", onPopState);
+    if (path === "/health") {
+      api.get("/api/health").then(({ data }) => setHealth(data.status)).catch(() => setHealth("Backend unavailable"));
+    }
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [path]);
 
-  if (window.location.pathname === "/health") {
-    return (
-      <main>
-        <h1>Backend Status</h1>
-        <p>{healthStatus}</p>
-      </main>
-    );
-  }
-
-  if (window.location.pathname === "/dashboard") {
-    return <Dashboard />;
-  }
-
-  return <Login />;
+  if (path === "/health") return <main className="health-page"><h1>Backend status</h1><p>{health}</p></main>;
+  if (path === "/dashboard") return token ? <Dashboard /> : <Login />;
+  if (path !== "/" && path !== "/login") window.history.replaceState({}, "", "/");
+  return token ? <Dashboard /> : <Login />;
 }
 
 export default App;
