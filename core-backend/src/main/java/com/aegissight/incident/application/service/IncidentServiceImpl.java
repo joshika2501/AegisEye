@@ -107,6 +107,7 @@ public class IncidentServiceImpl implements IncidentService {
         IncidentStatusTransitionValidator.validate(incident.getStatus(), request.status());
 
         incident.setStatus(request.status());
+        incident.setStatusNote(request.note());
         incident.setUpdatedAt(Instant.now());
         Incident saved = incidentRepository.save(incident);
 

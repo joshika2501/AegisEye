@@ -8,5 +8,6 @@ public record UpdateIncidentStatusResponse(
     UUID id,
     String incidentCode,
     IncidentStatus status,
-    Instant updatedAt
+    Instant updatedAt,
+    String note
 ) {}

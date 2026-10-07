@@ -56,6 +56,7 @@ public class IncidentMapper {
                 camera != null ? camera.getLongitude() : null,
                 incident.getCreatedAt(),
                 incident.getUpdatedAt(),
+                incident.getStatusNote(),
                 latestDetection
         );
     }
@@ -80,7 +81,8 @@ public class IncidentMapper {
                 incident.getId(),
                 incident.getIncidentCode(),
                 incident.getStatus(),
-                incident.getUpdatedAt()
+                incident.getUpdatedAt(),
+                incident.getStatusNote()
         );
     }
 }

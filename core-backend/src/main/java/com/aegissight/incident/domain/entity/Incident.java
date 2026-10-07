@@ -54,6 +54,9 @@ public class Incident {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @Column(name = "status_note", columnDefinition = "TEXT")
+    private String statusNote;
+
     protected Incident() {
     }
 
@@ -133,11 +136,19 @@ public class Incident {
         return updatedAt;
     }
 
+    public String getStatusNote() {
+        return statusNote;
+    }
+
     public void setStatus(IncidentStatus status) {
         this.status = status;
     }
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setStatusNote(String statusNote) {
+        this.statusNote = statusNote;
     }
 }

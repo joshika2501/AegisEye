@@ -27,7 +27,7 @@ Controller -> Service / UseCase -> Repository -> Database
 
 ## Configuration
 
-Create a local `.env` or export the variables shown in `.env.example`.
+Set the variables shown in `.env.example` in your shell or IDE run configuration. Spring Boot does not load a plain `.env` file automatically.
 
 Required variables:
 
@@ -42,6 +42,18 @@ Optional variables:
 - `JWT_EXPIRATION_SECONDS`: defaults to `86400`
 - `CORS_ALLOWED_ORIGINS`: comma-separated frontend origins
 - `JPA_SHOW_SQL`: defaults to `false`
+
+The JWT secret is required; the application will not start without it. Do not commit a real secret. The previous signing key was present in a committed configuration file, so use a newly generated secret and invalidate tokens signed with the old key.
+
+For Git Bash, set the variables for the current terminal before starting the backend:
+
+```bash
+export DB_URL=jdbc:postgresql://localhost:5432/aegissight
+export DB_USERNAME=aegissight
+export DB_PASSWORD=your-local-database-password
+export JWT_SECRET='replace-with-a-private-random-secret-at-least-32-bytes-long'
+./mvnw spring-boot:run
+```
 
 ## Database Setup
 
