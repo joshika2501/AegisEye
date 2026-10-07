@@ -2,13 +2,15 @@
   <configuration default="false" name="CoreBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" activateToolWindowBeforeRun="false" nameIsGenerated="true">
     <envs>
       <env name="DB_URL" value="jdbc:postgresql://localhost:5432/aegissight" />
-      <env name="DB_USERNAME" value="postgres" />
-      <env name="DB_PASSWORD" value="Piou@2025" />
+      <env name="DB_USERNAME" value="aegissight" />
       <env name="SERVER_PORT" value="8080" />
+      <env name="DB_PASSWORD" value="Piou@2026" />
     </envs>
     <option name="INCLUDE_PROVIDED_SCOPE" value="false" />
     <module name="core-backend" />
+    <option name="PASS_PARENT_ENVS" value="false" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.aegissight.CoreBackendApplication" />
+    <option name="VM_PARAMETERS" value="-Djava.io.tmpdir=C:\temp" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

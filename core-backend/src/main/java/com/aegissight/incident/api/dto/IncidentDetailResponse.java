@@ -22,6 +22,7 @@ public record IncidentDetailResponse(
     Double longitude,
     Instant createdAt,
     Instant updatedAt,
+    String statusNote,
     LatestDetectionDto latestDetection
 ) {
     public record LatestDetectionDto(

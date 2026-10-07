@@ -12,6 +12,7 @@ Description:
 """
 
 from typing import List
+import os
 
 import cv2
 from ultralytics import YOLO
@@ -43,9 +44,9 @@ class VehicleDetector:
 
         self.device = get_device()
 
-        self.model_name = self.config.get(
-            "detector",
-            "model"
+        self.model_name = os.getenv(
+            "AEGIS_YOLO_MODEL",
+            self.config.get("detector", "model"),
         )
 
         self.confidence = self.config.get(

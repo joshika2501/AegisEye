@@ -1,0 +1,4 @@
+# Python dependencies are separated by component:
+#   ai/requirements.txt
+#   ai/requirements-crossview.txt (optional)
+#   integration/ai_adapter/requirements.txt

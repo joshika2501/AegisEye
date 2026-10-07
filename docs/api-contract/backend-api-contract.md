@@ -132,6 +132,7 @@ Common status codes:
 - `409 Conflict`: duplicate resource or invalid incident status transition
 - `422 Unprocessable Entity`: validation failed
 - `500 Internal Server Error`: unexpected backend failure
+- `503 Service Unavailable`: the health endpoint reports that the database is unavailable
 
 ## 1. Authentication
 
@@ -184,9 +185,10 @@ Request JSON:
 {
   "sourceId": "CAM-102",
   "eventType": "PHYSICAL_DISTURBANCE",
+  "confidence": 0.94,
   "severity": "HIGH",
   "peopleCount": 28,
-  "vehicleCount": 2
+  "vehicleCount": 2,
   "riskScore": 87,
   "timestamp": "2026-07-23T10:15:30Z",
   "summary": "Possible physical disturbance detected near the main gate."
@@ -195,11 +197,12 @@ Request JSON:
 
 Validation rules:
 
-- `sourceId` is required and must match a known camera/source metadata record when available. `sourceId` represents the registered camera/UAV identifier. Backend uses this identifier to associate detections with stored camera metadata.
+- `sourceId` is required and must match a registered camera/source metadata record. `sourceId` represents the registered camera/UAV identifier. The backend uses this identifier to associate detections with stored camera metadata.
 - `eventType` is required and must be one of the supported event types.
 - `confidence` is required and must be between `0.0` and `1.0`.
 - `severity` is required and must be one of `LOW`, `MEDIUM`, `HIGH`, or `CRITICAL`.
 - `peopleCount` is optional; when present, it must be `0` or greater.
+- `vehicleCount` is optional; when present, it must be `0` or greater.
 - `riskScore` is required and must be between `0` and `100`.
 - `timestamp` is required and must be ISO-8601 UTC.
 - `summary` is optional but recommended for dashboard display.
@@ -328,6 +331,7 @@ Response JSON `200 OK`:
   "longitude": 85.8245,
   "createdAt": "2026-07-23T10:15:31Z",
   "updatedAt": "2026-07-23T10:15:31Z",
+  "statusNote": null,
   "latestDetection": {
     "id": "f7df0489-28a3-4fd2-a42a-f87f7124c731",
     "confidence": 0.94,
@@ -368,9 +372,12 @@ Response JSON `200 OK`:
   "id": "1197689b-09be-40e4-9b3f-31b983820ab5",
   "incidentCode": "INC-20260723-0001",
   "status": "RESPONDING",
-  "updatedAt": "2026-07-23T10:20:00Z"
+  "updatedAt": "2026-07-23T10:20:00Z",
+  "note": "Security team dispatched to main gate."
 }
 ```
+
+The backend stores the latest optional status-update note and returns it in status-update and incident-detail responses. Notes may contain at most 2,000 characters.
 
 Possible error responses:
 
@@ -379,6 +386,7 @@ Possible error responses:
 - `404 Not Found`: incident does not exist
 - `409 Conflict`: requested status transition is not allowed
 - `422 Unprocessable Entity`: status is blank or unsupported
+- `422 Unprocessable Entity`: note exceeds 2,000 characters
 - `500 Internal Server Error`: status could not be updated
 
 ### GET `/api/incidents/critical`
@@ -563,9 +571,12 @@ Response JSON `200 OK`:
 }
 ```
 
+The endpoint checks database connectivity. It returns `200 OK` with `status: UP` when the database is reachable and `503 Service Unavailable` with `status: DOWN` otherwise. Database error details are not exposed.
+
 Possible error responses:
 
-- `500 Internal Server Error`: backend is reachable but unhealthy
+- `503 Service Unavailable`: database connectivity check failed; response body reports `status: DOWN`
+- `500 Internal Server Error`: unexpected health-check failure
 
 ## Backend Database Entities
 
@@ -607,6 +618,7 @@ Fields:
 - `confidence`: AI confidence between `0.0` and `1.0`
 - `severity`: AI-provided severity
 - `peopleCount`: optional count from AI pipeline
+- `vehicleCount`: optional count from AI pipeline
 - `riskScore`: AI risk score between `0` and `100`
 - `detectedAt`: AI event timestamp
 - `summary`: AI-provided summary
@@ -630,6 +642,7 @@ Fields:
 - `status`: `NEW`, `VERIFIED`, `RESPONDING`, `RESOLVED`, or `FALSE_ALERT`
 - `createdAt`: creation timestamp
 - `updatedAt`: last update timestamp
+- `statusNote`: latest optional operator note supplied during a status update
 
 ### Alert
 
