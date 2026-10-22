@@ -1,6 +1,6 @@
-function StatCard({ icon, value, label, subtext, color }) {
+function StatCard({ icon, value, label, subtext, color, onClick }) {
     return (
-        <div className="stat-card">
+        <button type="button" className={`stat-card${onClick ? " stat-card-action" : ""}`} onClick={onClick} disabled={!onClick}>
 
             <div className={`stat-icon stat-icon-${color}`}>
                 <span>{icon}</span>
@@ -12,7 +12,7 @@ function StatCard({ icon, value, label, subtext, color }) {
                 <span className="stat-subtext">{subtext}</span>
             </div>
 
-        </div>
+        </button>
     );
 }
 

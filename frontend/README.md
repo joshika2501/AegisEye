@@ -1,32 +1,16 @@
-# AegisSight web dashboard
+# React + Vite
 
-React + Vite operator UI for the Spring Boot API in `../core-backend`.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Run locally
+Currently, two official plugins are available:
 
-1. Start PostgreSQL and the backend using the instructions in `../core-backend/README.md`.
-2. Create `frontend/.env.local` with the API base URL if it is not `http://localhost:8080`:
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-   ```dotenv
-   VITE_API_URL=http://localhost:8080
-   ```
+## React Compiler
 
-3. Install dependencies and start Vite:
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-   ```sh
-   npm install
-   npm run dev
-   ```
+## Expanding the ESLint configuration
 
-Open the URL printed by Vite. Log in with an account provisioned by the backend. The login field accepts the backend `username` (the seeded local operator is documented in the backend README).
-
-## Current API-backed features
-
-- JWT login and sign out.
-- Dashboard summary from `GET /api/incidents`, `GET /api/alerts`, `GET /api/cameras`, and `GET /api/health`.
-- Incident detail and allowed lifecycle updates through `GET /api/incidents/{id}` and `PUT /api/incidents/{id}/status`.
-- Refresh and clear API error feedback.
-
-The camera endpoint supplies metadata only. This UI does not yet show camera video streams, UAV telemetry, zone analytics, or map coordinates on a geospatial map. Alert creation and user administration are also not exposed as dashboard actions.
-
-Older Figma-oriented components and their mock data files remain in `src/Components/` for reference, but the current `Dashboard` does not mount them. Do not treat those mock values as live system data.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
