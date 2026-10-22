@@ -1,13 +1,13 @@
 import ZoneCard from "./ZoneCard";
 import { zoneOverview } from "./zoneOverviewData";
 
-function ZoneOverview() {
+function ZoneOverview({ onViewAll }) {
     return (
         <div className="section-card">
 
             <div className="section-card-header">
-                <span>Zone Overview</span>
-                <span className="section-card-link">View All ›</span>
+                <span>Zone Overview · sample</span>
+                <button className="section-card-link" type="button" onClick={onViewAll}>View All ›</button>
             </div>
 
             <div className="zone-overview-grid">

@@ -1,27 +1,50 @@
 import { useEffect, useState } from "react";
-import api from "./api/axiosInstance";
 import "./App.css";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Login from "./pages/Login/Login";
+import OperationsPage from "./pages/Operations/OperationsPage";
+
+export { DEMO_STORAGE_KEY } from "./demoData";
 
 function App() {
-  const [path, setPath] = useState(window.location.pathname);
-  const [health, setHealth] = useState("Checking backend…");
-  const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+  const initialPath = window.location.pathname;
+  const hasDemoSession = sessionStorage.getItem("aegissight.demo") === "true";
+  const [theme, setTheme] = useState(() => localStorage.getItem("aegissight.theme") || "dark");
+  const [demo, setDemo] = useState(hasDemoSession);
+  const [page, setPage] = useState(() => initialPath.startsWith("/dashboard") && hasDemoSession ? (initialPath.split("/")[2] || "dashboard") : "login");
 
   useEffect(() => {
-    const onPopState = () => setPath(window.location.pathname);
-    window.addEventListener("popstate", onPopState);
-    if (path === "/health") {
-      api.get("/api/health").then(({ data }) => setHealth(data.status)).catch(() => setHealth("Backend unavailable"));
-    }
-    return () => window.removeEventListener("popstate", onPopState);
-  }, [path]);
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("aegissight.theme", theme);
+  }, [theme]);
 
-  if (path === "/health") return <main className="health-page"><h1>Backend status</h1><p>{health}</p></main>;
-  if (path === "/dashboard") return token ? <Dashboard /> : <Login />;
-  if (path !== "/" && path !== "/login") window.history.replaceState({}, "", "/");
-  return token ? <Dashboard /> : <Login />;
+  useEffect(() => {
+    const handlePop = () => setPage(window.location.pathname.startsWith("/dashboard") && sessionStorage.getItem("aegissight.demo") === "true" ? (window.location.pathname.split("/")[2] || "dashboard") : "login");
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, []);
+
+  const enterDemo = () => {
+    sessionStorage.setItem("aegissight.demo", "true");
+    setDemo(true);
+    setPage("dashboard");
+    window.history.pushState({}, "", "/dashboard?mode=demo");
+  };
+  const exitDemo = () => {
+    sessionStorage.removeItem("aegissight.demo");
+    setDemo(false);
+    setPage("login");
+    window.history.pushState({}, "", "/");
+  };
+  const navigate = (next) => {
+    setPage(next);
+    window.history.pushState({}, "", next === "dashboard" ? "/dashboard?mode=demo" : `/dashboard/${next}?mode=demo`);
+  };
+
+  if (page === "login" && !demo) return <Login onTryDemo={enterDemo} theme={theme} setTheme={setTheme} />;
+  return page === "dashboard"
+    ? <Dashboard theme={theme} setTheme={setTheme} demo={demo} onExitDemo={exitDemo} onNavigate={navigate} />
+    : <OperationsPage page={page} theme={theme} setTheme={setTheme} demo={demo} onExitDemo={exitDemo} onNavigate={navigate} />;
 }
 
 export default App;

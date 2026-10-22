@@ -1,26 +1,23 @@
 import { cameraThumbnails } from "./thumbnailsData";
 
-function CameraThumbnails() {
+function CameraThumbnails({ onNavigate }) {
     return (
         <div className="section-card">
 
-            {/* Note: your Figma also labels this row "Zone Overview" — kept as-is
-                for an exact match, but you'll likely want to rename this to
-                something like "Live Camera Feed" */}
             <div className="section-card-header">
-                <span>Live Feed</span>
-                <span className="section-card-link">View All ›</span>
+                <span>Sample camera tiles</span>
+                <span className="section-card-link">No streams connected</span>
             </div>
 
             <div className="thumbnail-grid">
                 {cameraThumbnails.map((cam) => (
-                    <div className="thumbnail-item" key={cam.id}>
+                    <button className="thumbnail-item" type="button" key={cam.id} onClick={() => onNavigate("videos")} aria-label={`Open sample video monitoring for ${cam.id}`}>
                         <div className="thumbnail-card">
                             <span>🎥</span>
-                            <span className="thumbnail-live-tag">LIVE</span>
+                            <span className="thumbnail-live-tag">DEMO</span>
                         </div>
                         <span className="thumbnail-label">{cam.id}</span>
-                    </div>
+                    </button>
                 ))}
             </div>
 

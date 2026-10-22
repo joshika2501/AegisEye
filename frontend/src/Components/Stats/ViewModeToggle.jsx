@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function ViewModeToggle() {
+function ViewModeToggle({ onChange }) {
     const [mode, setMode] = useState("surveillance");
 
     return (
@@ -11,14 +11,16 @@ function ViewModeToggle() {
             <div className="view-mode-toggle">
                 <button
                     className={`view-mode-btn ${mode === "surveillance" ? "active" : ""}`}
-                    onClick={() => setMode("surveillance")}
+                    aria-pressed={mode === "surveillance"}
+                    onClick={() => { setMode("surveillance"); onChange?.("surveillance"); }}
                 >
                     SURVEILLANCE
                 </button>
 
                 <button
                     className={`view-mode-btn ${mode === "monitoring" ? "active" : ""}`}
-                    onClick={() => setMode("monitoring")}
+                    aria-pressed={mode === "monitoring"}
+                    onClick={() => { setMode("monitoring"); onChange?.("monitoring"); }}
                 >
                     MONITORING
                 </button>
