@@ -1,5 +1,4 @@
 import { useState } from "react";
-import api from "../../api/axiosInstance";
 import "./Login.css";
 
 function MailIcon() {
@@ -16,37 +15,19 @@ function EyeIcon({ hidden }) {
     ) : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6.2 5 12 5s9.5 7 9.5 7-3.7 7-9.5 7S2.5 12 2.5 12Z" /><circle cx="12" cy="12" r="3" /></svg>;
 }
 
-function Login() {
+function Login({ onTryDemo, theme, setTheme }) {
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(true);
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setBusy(true);
-        setError("");
-        try {
-            const { data } = await api.post("/api/auth/login", { username, password });
-            localStorage.removeItem("accessToken");
-            sessionStorage.removeItem("accessToken");
-            (rememberMe ? localStorage : sessionStorage).setItem("accessToken", data.accessToken);
-            localStorage.setItem("displayName", data.user?.displayName || data.user?.username || username);
-            window.location.assign("/dashboard");
-        } catch (requestError) {
-            setError(requestError.response?.data?.message || "Login failed. Check your username, password, and backend connection.");
-        } finally {
-            setBusy(false);
-        }
-    };
+    const handleSubmit = (event) => { event.preventDefault(); setMessage("Authentication is unavailable because no backend sign-in endpoint is configured."); };
 
     return (
         <main className="login-page">
+            <button className="login-theme-toggle" type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? "☼ Light mode" : "◐ Dark mode"}</button>
             <div className="login-frame">
                 <section className="login-brand" aria-label="AegisEye Security Solutions">
-                    <img src="/logo.jpeg" alt="AegisEye — Watch. Analyze. Protect." />
+                    <img src={theme === "light" ? "/aegiseye-light-transparent.png" : "/aegiseye-dark-transparent.png"} alt="AegisEye — Intelligent Surveillance & Defense" />
                 </section>
 
                 <section className="login-card" aria-labelledby="login-title">
@@ -57,10 +38,10 @@ function Login() {
 
                     <form className="login-form" onSubmit={handleSubmit}>
                         <label className="login-field">
-                            <span>Username</span>
+                            <span>Email Address</span>
                             <span className="login-input-wrap">
                 <MailIcon />
-                <input type="text" name="username" placeholder="Enter your username" autoComplete="username" value={username} onChange={(event) => setUsername(event.target.value)} required />
+                <input type="email" name="email" placeholder="Enter your email" autoComplete="email" />
               </span>
                         </label>
 
@@ -68,7 +49,7 @@ function Login() {
                             <span>Password</span>
                             <span className="login-input-wrap">
                 <LockIcon />
-                <input type={showPassword ? "text" : "password"} name="password" placeholder="Enter your password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
+                <input type={showPassword ? "text" : "password"} name="password" placeholder="Enter your password" autoComplete="current-password" />
                 <button className="password-toggle" type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"}>
                   <EyeIcon hidden={showPassword} />
                 </button>
@@ -80,12 +61,18 @@ function Login() {
                                 <input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />
                                 <span>Remember Me</span>
                             </label>
-                            <span className="login-no-reset">Use your project operator account</span>
+                            <a href="#forgot-password" onClick={(event) => { event.preventDefault(); setMessage("Password recovery is unavailable because the authentication service is not connected."); }}>Forgot Password?</a>
                         </div>
 
-                        {error && <p className="login-error" role="alert">{error}</p>}
-                        <button className="login-submit" type="submit" disabled={busy}><LockIcon /> {busy ? "SIGNING IN…" : "LOGIN"}</button>
+                        <button className="login-submit" type="submit"><LockIcon /> LOGIN</button>
+                        <p className="login-unavailable" role="status">{message || "Authentication service is not connected in this frontend build. Demo mode is isolated in this browser session."}</p>
 
+                        <div className="login-divider"><span>OR</span></div>
+
+                        <button className="login-sso" type="button" onClick={onTryDemo}>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8" r="4" /><path d="M3 20c0-3.2 2.7-5.5 7-5.5s7 2.3 7 5.5M17 12.5a3.5 3.5 0 0 1 4 3.5M18 17h3" /></svg>
+                            Try the demo workspace
+                        </button>
                     </form>
                 </section>
             </div>

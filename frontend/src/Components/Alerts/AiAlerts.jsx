@@ -1,17 +1,17 @@
 import { alerts } from "./alertsData";
 
-function AiAlerts() {
+function AiAlerts({ onViewAll }) {
     return (
         <div className="panel-dark">
 
             <div className="panel-title">
-                <span>AI ALERTS</span>
-                <span className="panel-title-link">View All ›</span>
+                <span>SAMPLE ALERTS</span>
+                <button className="panel-title-link" type="button" onClick={onViewAll}>View All ›</button>
             </div>
 
             <div className="alerts-list">
                 {alerts.map((alert) => (
-                    <div className="alert-item" key={alert.id}>
+                    <button className="alert-item" type="button" key={alert.id} onClick={onViewAll} aria-label={`View sample alert: ${alert.title}`}>
 
                         <div className={`alert-icon alert-icon-${alert.severity}`}>
                             {alert.icon}
@@ -29,7 +29,7 @@ function AiAlerts() {
                             </span>
                         </div>
 
-                    </div>
+                    </button>
                 ))}
             </div>
 

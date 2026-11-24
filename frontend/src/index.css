@@ -12,5 +12,6 @@ body,
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.4;
 }
